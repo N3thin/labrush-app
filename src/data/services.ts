@@ -9,7 +9,7 @@ export type Service = {
   description: string;
 };
 
-export const serviceCategories = ["All", "Nails", "Pedicure & Manicure", "Hair Services", "Hair Treatments", "Body & Massage", "Facials"] as const;
+export const serviceCategories = ["Nails", "Pedicure & Manicure", "Hair Services", "Hair Treatments", "Body & Massage", "Facials"] as const;
 
 export const services: Service[] = [
   { id: "acrylics", name: "Acrylics (Tips)", category: "Nails", price: 4500, description: "Sculpted acrylic extensions, shaped and finished to your style." },
@@ -34,8 +34,10 @@ export const services: Service[] = [
   { id: "crochet", name: "Crochet", category: "Hair Services", price: 2000, maxPrice: 3500, description: "A versatile protective style with a comfortable finish." },
   { id: "undo", name: "Undo", category: "Hair Services", price: 300, maxPrice: 500, description: "Careful take-down to help protect your natural hair." },
   { id: "weaving", name: "Weaving", category: "Hair Services", price: 2500, maxPrice: 3500, description: "A seamless weave installation, finished with care." },
+  { id: "sister-locs-installation", name: "Sister Locs Installation", category: "Hair Services", price: 15000, maxPrice: 20000, description: "A careful Sister Locs installation tailored to your hair." },
+  { id: "sister-locs-retouch", name: "Sister locs Retouch", category: "Hair Services", price: 3000, maxPrice: 4000, description: "A maintenance retouch to keep your Sister Locs neat." },
   { id: "affirm", name: "Affirm Treatment", category: "Hair Treatments", price: 3000, description: "A restorative treatment for hair that needs extra care." },
-  { id: "loreal", name: "Loreal Treatment", category: "Hair Treatments", price: 3000, description: "A nourishing salon treatment for softer, healthier-looking hair." },
+  { id: "loreal", name: "Loreal Treatment", category: "Hair Treatments", price: 3500, description: "A nourishing salon treatment for softer, healthier-looking hair." },
   { id: "other-treatment", name: "Other Treatment", category: "Hair Treatments", price: 1500, description: "Targeted hair care tailored to your needs." },
   { id: "ayurvedic", name: "Ayurvedic Treatments", category: "Hair Treatments", price: 2000, description: "A traditional botanical treatment for scalp and strands." },
   { id: "sister-locks", name: "Sister Locks - Installation", category: "Hair Treatments", price: 30000, maxPrice: 40000, description: "A considered Sister Locks installation; consultation recommended." },

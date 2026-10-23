@@ -12,6 +12,7 @@ import {
   Menu as MenuIcon,
   Phone,
   Plus,
+  Search,
   Sparkles,
   X,
 } from "lucide-react";
@@ -141,12 +142,19 @@ function BookingModal({
 }
 
 export default function SalonExperience() {
-  const [activeCategory, setActiveCategory] = useState<(typeof serviceCategories)[number]>("All");
+  const [activeCategory, setActiveCategory] = useState<(typeof serviceCategories)[number]>("Nails");
+  const [serviceQuery, setServiceQuery] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [isBookingOpen, setBookingOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const filteredServices = useMemo(() => activeCategory === "All" ? services : services.filter((service) => service.category === activeCategory), [activeCategory]);
+  const filteredServices = useMemo(() => {
+    const query = serviceQuery.trim().toLocaleLowerCase();
+    return services.filter((service) => {
+      if (!query) return service.category === activeCategory;
+      return `${service.name} ${service.category} ${service.description}`.toLocaleLowerCase().includes(query);
+    });
+  }, [activeCategory, serviceQuery]);
   const chosen = services.filter((service) => selected.includes(service.id));
   const minTotal = chosen.reduce((total, service) => total + service.price, 0);
   const maxTotal = chosen.reduce((total, service) => total + (service.maxPrice ?? service.price), 0);
@@ -193,8 +201,9 @@ export default function SalonExperience() {
 
       <section className="services-section section-wrap" id="services">
         <div className="section-heading"><div><span className="eyebrow">A RITUAL FOR EVERY YOU</span><h2>Find your <em>feel-good.</em></h2></div><p>From a fresh set to a full reset, make space for the care you deserve.</p></div>
-        <div className="service-tools"><div className="filter-tabs" role="tablist" aria-label="Filter services">{serviceCategories.map((category) => <button role="tab" aria-selected={activeCategory === category} className={activeCategory === category ? "filter-tab active" : "filter-tab"} key={category} onClick={() => setActiveCategory(category)}>{category}</button>)}</div><span className="service-count">{filteredServices.length} SERVICES</span></div>
+        <div className="service-tools"><div className="service-controls"><label className="service-category-select"><span className="sr-only">Service category</span><select value={activeCategory} onChange={(event) => setActiveCategory(event.target.value as (typeof serviceCategories)[number])}>{serviceCategories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label><label className="service-search"><Search size={15} aria-hidden="true" /><span className="sr-only">Search services</span><input type="search" value={serviceQuery} onChange={(event) => setServiceQuery(event.target.value)} placeholder="Search services" /></label></div><span className="service-count">{filteredServices.length} SERVICES</span></div>
         <motion.div layout className="service-grid">{filteredServices.map((service) => <ServiceCard key={service.id} service={service} selected={selected.includes(service.id)} onToggle={() => toggleService(service.id)} />)}</motion.div>
+        {filteredServices.length === 0 && <p className="service-empty" role="status">No services found. Try a different search.</p>}
         {selected.length > 0 && <motion.aside className="estimate-bar" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="estimate-bar__items"><span className="estimate-count">{selected.length}</span><div><strong>{chosen.map((service) => service.name).join(" · ")}</strong><small>Estimated total</small></div></div>
           <div className="estimate-bar__total"><strong>{hasConsultation ? "From " : ""}KSh {minTotal.toLocaleString("en-KE")}{maxTotal !== minTotal ? ` – ${maxTotal.toLocaleString("en-KE")}` : ""}</strong><small>{hasConsultation ? "Nail art confirmed after consultation" : "Final price confirmed at salon"}</small></div>
@@ -206,8 +215,8 @@ export default function SalonExperience() {
       <section className="quote-band"><span className="quote-band__ornament">“</span><p>Where beauty meets <em>relaxation.</em></p><span>YOUR BEAUTY, OUR PRIORITY</span></section>
 
       <section className="visit-section section-wrap" id="visit">
-        <div className="visit-copy"><span className="eyebrow">COME AS YOU ARE</span><h2>Your next little <em>escape.</em></h2><p>Find us in the heart of Kileleshwa. We’ll have a warm welcome and a little time set aside just for you.</p><div className="visit-details"><div><span className="visit-icon"><MapPin size={17} /></span><p><strong>Find the salon</strong><span>Olenguruone Road, Kileleshwa<br />Nairobi, Kenya</span></p></div><div><span className="visit-icon"><Clock3 size={17} /></span><p><strong>Appointments</strong><span>Message us for current opening hours<br />Walk-ins welcome when available</span></p></div></div><div className="contact-actions"><a className="button button--dark" href="tel:+254720477375"><Phone size={15} /> Call the salon</a><a className="button button--outline" href={whatsappLink("Hello LABRUSH! I'd like to ask about booking a visit.")} target="_blank" rel="noreferrer">WhatsApp us <ArrowRight size={15} /></a></div><div className="social-links"><a href="https://www.instagram.com/labrushhairnailsandspa/" target="_blank" rel="noreferrer"><Instagram size={15} /> Instagram</a><a href="https://www.tiktok.com/@labrushhairnailsa" target="_blank" rel="noreferrer">TikTok <ArrowRight size={13} /></a><a href="mailto:labrushhairsnailsandspa@gmail.com">Email <ArrowRight size={13} /></a></div></div>
-        <div className="map-frame"><iframe title="Map showing LABRUSH in Kileleshwa, Nairobi" src="https://maps.google.com/maps?q=Olenguruone%20Road%2C%20Kileleshwa%2C%20Nairobi&t=&z=14&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /><a className="map-label" href="https://maps.google.com/?q=Olenguruone+Road,+Kileleshwa,+Nairobi" target="_blank" rel="noreferrer"><MapPin size={15} /> KILELESHWA, NAIROBI <ArrowRight size={13} /></a></div>
+        <div className="visit-copy"><span className="eyebrow">COME AS YOU ARE</span><h2>Your next little <em>escape.</em></h2><p>Find us in the heart of Kileleshwa. We’ll have a warm welcome and a little time set aside just for you.</p><div className="visit-details"><div><span className="visit-icon"><MapPin size={17} /></span><p><strong>Find the salon</strong><span>Olenguruone Road, Kileleshwa<br />Nairobi, Kenya</span></p></div><div><span className="visit-icon"><Clock3 size={17} /></span><p><strong>Opening hours</strong><span>Monday to Saturday: 9:00 AM–10:00 PM<br />Sunday: Booked appointments only</span></p></div></div><div className="contact-actions"><a className="button button--dark" href="tel:+254720477375"><Phone size={15} /> Call the salon</a><a className="button button--outline" href={whatsappLink("Hello LABRUSH! I'd like to ask about booking a visit.")} target="_blank" rel="noreferrer">WhatsApp us <ArrowRight size={15} /></a></div><div className="social-links"><a href="https://www.instagram.com/labrushhairnailsandspa/" target="_blank" rel="noreferrer"><Instagram size={15} /> Instagram</a><a href="https://www.tiktok.com/@labrushhairnailsa" target="_blank" rel="noreferrer">TikTok <ArrowRight size={13} /></a><a href="mailto:labrushhairsnailsandspa@gmail.com">Email <ArrowRight size={13} /></a></div></div>
+        <div className="map-frame"><iframe title="Map showing LABRUSH Hair Nails & Spa in Nairobi" src="https://maps.google.com/maps?q=LaBrush%20Hair%20Nails%20%26%20Spa%2C%20Nairobi&t=&z=17&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /><a className="map-label" href="https://maps.app.goo.gl/rpMxwLTX2euzSzKF8" target="_blank" rel="noreferrer"><MapPin size={15} /> KILELESHWA, NAIROBI <ArrowRight size={13} /></a></div>
       </section>
 
       <section className="faq-section"><div className="faq-inner"><div><span className="eyebrow">GOOD TO KNOW</span><h2>A few little <em>details.</em></h2><p>Anything else on your mind? <a href={whatsappLink("Hello LABRUSH! I have a question.")} target="_blank" rel="noreferrer">We’re one message away.</a></p></div><div className="faq-list">{faqs.map((faq, index) => <div className={`faq-item ${openFaq === index ? "open" : ""}`} key={faq.question}><button onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}><span>{faq.question}</span><ChevronDown size={17} /></button><AnimatePresence initial={false}>{openFaq === index && <motion.div className="faq-answer" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}><p>{faq.answer}</p></motion.div>}</AnimatePresence></div>)}</div></div></section>
